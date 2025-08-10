@@ -41,7 +41,7 @@ const pageRoute: Route[] = [
   {
     key: 'milk-receipt',
     path: `/milk-receipt`,
-    component: React.lazy(() => import('../../view/milk-receipt/milk-receipt-create')),
+    component: React.lazy(() => import('../../view/milk-receipt/milk-receipt-list')),
     resource: 'user',
     action: 'read',
   },

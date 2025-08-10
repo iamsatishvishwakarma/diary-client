@@ -16,8 +16,11 @@ const userSlice = createSlice({
     setMilkReceiptList: (state, action: PayloadAction<MilkReceiptResponse>) => {
       state.milkReceiptList = action.payload.data;
     },
+    addMilkReceipt: (state, action: PayloadAction<MilkReceiptRow>) => {
+      state.milkReceiptList.push(action.payload);
+    },
   },
 });
 
-export const { setMilkReceiptList } = userSlice.actions;
+export const { setMilkReceiptList, addMilkReceipt } = userSlice.actions;
 export default userSlice.reducer;

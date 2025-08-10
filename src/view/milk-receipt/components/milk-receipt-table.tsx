@@ -8,10 +8,9 @@ import TableBodyRow from '../../../components/ui/table/table-body-row';
 import CustomMenu from '../../../components/ui/menu';
 import { getMuiIcon } from '../../../utils/functions/mui-icon';
 import type { MilkReceiptRow } from '../../../types/response/milk-receipt';
-import { useMilkReceiptListMutation } from '../../../features/milk-receipt/milk-receipt-api';
-import { useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../../store';
+import { useMilkReceiptListQuery } from '../../../features/milk-receipt/milk-receipt-api';
+import { useMemo } from 'react';
+
 import dayjs from 'dayjs';
 
 type TMilkReceiptRow = {
@@ -118,16 +117,11 @@ const headCells: HeadCell<TMilkReceiptRow>[] = [
 ];
 
 const MilkReceiptTable = () => {
-  const [milkReceiptList] = useMilkReceiptListMutation();
-  const data = useSelector((state: RootState) => state.milkReceipt.milkReceiptList);
+  const { data } = useMilkReceiptListQuery();
 
   const rows: TMilkReceiptRow[] = useMemo(() => {
-    return data.map((user) => createData(user));
+    return data?.data.map((user) => createData(user)) || [];
   }, [data]);
-
-  useEffect(() => {
-    milkReceiptList({});
-  }, [milkReceiptList]);
 
   return (
     <Box sx={{ width: '100%' }}>

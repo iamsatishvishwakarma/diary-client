@@ -1,74 +1,59 @@
 import { useState } from 'react';
+import Button from '@mui/material/Button';
 import CustomDialog from '../../components/ui/shared/dialog';
-import MilkReceiptForm from './components/milk-receipt-form';
-import { Button, Box } from '@mui/material';
-import { FormProvider, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import MilkReceiptForm, { type MilkReceiptFormData } from './components/milk-receipt-form';
+import { useCreateMilkReceiptMutation } from '../../features/milk-receipt/milk-receipt-api';
+import dayjs from 'dayjs';
 
 const defaultValues: MilkReceiptFormData = {
-  fat: undefined,
-  snf: undefined,
-  qty: undefined,
-  rate: undefined,
-  dateTime: new Date(),
+  fat: 0,
+  snf: 0,
+  qty: 0,
+  rate: 0,
+  dateTime: '',
 };
 
-const schema = yup.object({
-  fat: yup.number().typeError('Fat must be a number').required('Fat is required'),
-  snf: yup.number().typeError('SNF must be a number').required('SNF is required'),
-  qty: yup.number().typeError('Qty must be a number').required('Qty is required'),
-  rate: yup.number().typeError('Rate must be a number').required('Rate is required'),
-  dateTime: yup.date().required('Date is required'),
-});
-
-export type MilkReceiptFormData = yup.InferType<typeof schema>;
-
 const MilkReceiptCreate = () => {
+  const [createMilkReceipt, { isLoading }] = useCreateMilkReceiptMutation();
   const [open, setOpen] = useState(true);
 
-  const [isLoading] = useState(false);
-
   const handleClose = () => {
-    setOpen(false);
+    if (!isLoading) {
+      setOpen(false);
+    }
   };
 
-  const methods = useForm<MilkReceiptFormData>({
-    defaultValues,
-    resolver: yupResolver(schema),
-  });
-
-  const onSubmit = (data: MilkReceiptFormData) => {
+  const onSumbit = (data: MilkReceiptFormData) => {
     console.log(data);
+    createMilkReceipt({
+      ...data,
+      dateTime: dayjs(data.dateTime),
+      amount: 0,
+    });
   };
 
   return (
-    <FormProvider {...methods}>
-      <Box
-        id='subscription-form'
-        component='form'
-        onSubmit={methods.handleSubmit(onSubmit)}
-      >
-        <CustomDialog
-          open={open}
-          onClose={handleClose}
-          title='New Receipt'
-          actions={
-            <Button
-              type='submit'
-              variant='contained'
-              loading={isLoading}
-              role='submit'
-              form='subscription-form'
-            >
-              SUMBIT
-            </Button>
-          }
+    <CustomDialog
+      open={open}
+      onClose={handleClose}
+      title='New Receipt'
+      actions={
+        <Button
+          form='milk-receipt-create-form'
+          type='submit'
+          variant='contained'
+          loading={isLoading}
         >
-          <MilkReceiptForm methods={methods} />
-        </CustomDialog>
-      </Box>
-    </FormProvider>
+          SUMBIT
+        </Button>
+      }
+    >
+      <MilkReceiptForm
+        formId='milk-receipt-create-form'
+        defaultValues={defaultValues}
+        onSubmit={onSumbit}
+      />
+    </CustomDialog>
   );
 };
 
