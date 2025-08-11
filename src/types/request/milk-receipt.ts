@@ -8,3 +8,8 @@ export interface MilkReceiptRequest {
   dateTime: Dayjs | null;
   amount: number;
 }
+
+export interface MilkReceiptFilterRequest {
+  month?: string;
+  day?: string;
+}

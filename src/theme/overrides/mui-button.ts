@@ -6,7 +6,7 @@ const buttonComponents: Components<Theme> = {
     styleOverrides: {
       root: ({ theme }) => ({
         borderRadius: 5,
-        boxShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)',
+        boxShadow: 'none',
         textTransform: 'none',
         fontWeight: 400,
         letterSpacing: '0.3px',
@@ -15,6 +15,11 @@ const buttonComponents: Components<Theme> = {
 
         '&:hover': {
           backgroundColor: theme.palette.primary.dark,
+        },
+        '&.Mui-disabled': {
+          backgroundColor: theme.palette.grey[300],
+          color: theme.palette.grey[500],
+          opacity: 1,
         },
       }),
       sizeSmall: ({ theme }) => ({

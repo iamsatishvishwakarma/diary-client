@@ -1,9 +1,15 @@
-import { useState } from 'react';
 import Button from '@mui/material/Button';
 import CustomDialog from '../../components/ui/shared/dialog';
 import MilkReceiptForm, { type MilkReceiptFormData } from './components/milk-receipt-form';
 import { useCreateMilkReceiptMutation } from '../../features/milk-receipt/milk-receipt-api';
 import dayjs from 'dayjs';
+
+const _FORM_ID = 'milk-receipt-create-form';
+
+interface IProps {
+  onClose: (boolean: boolean) => void;
+  open: boolean;
+}
 
 const defaultValues: MilkReceiptFormData = {
   fat: 0,
@@ -13,23 +19,27 @@ const defaultValues: MilkReceiptFormData = {
   dateTime: '',
 };
 
-const MilkReceiptCreate = () => {
+const MilkReceiptCreate = (props: IProps) => {
+  const { open, onClose } = props;
   const [createMilkReceipt, { isLoading }] = useCreateMilkReceiptMutation();
-  const [open, setOpen] = useState(true);
 
   const handleClose = () => {
     if (!isLoading) {
-      setOpen(false);
+      onClose(false);
     }
   };
 
-  const onSumbit = (data: MilkReceiptFormData) => {
+  const onSumbit = async (data: MilkReceiptFormData) => {
     console.log(data);
-    createMilkReceipt({
+    const response = await createMilkReceipt({
       ...data,
       dateTime: dayjs(data.dateTime),
       amount: 0,
     });
+    console.log(response);
+    if (response.data) {
+      handleClose();
+    }
   };
 
   return (
@@ -39,7 +49,7 @@ const MilkReceiptCreate = () => {
       title='New Receipt'
       actions={
         <Button
-          form='milk-receipt-create-form'
+          form={_FORM_ID}
           type='submit'
           variant='contained'
           loading={isLoading}
@@ -49,7 +59,7 @@ const MilkReceiptCreate = () => {
       }
     >
       <MilkReceiptForm
-        formId='milk-receipt-create-form'
+        formId={_FORM_ID}
         defaultValues={defaultValues}
         onSubmit={onSumbit}
       />

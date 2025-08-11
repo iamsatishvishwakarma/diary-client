@@ -6,9 +6,10 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
+import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
 import type { SvgIconProps } from '@mui/material';
 
-type IconKey = 'edit' | 'delete' | 'view' | 'more' | 'check' | 'close' | 'add';
+type IconKey = 'edit' | 'delete' | 'view' | 'more' | 'check' | 'close' | 'add' | 'filter';
 
 export function getMuiIcon(name: IconKey, props?: SvgIconProps): React.ReactNode {
   const iconMap: Record<IconKey, React.ReactNode> = {
@@ -19,6 +20,7 @@ export function getMuiIcon(name: IconKey, props?: SvgIconProps): React.ReactNode
     check: <CheckIcon {...props} />,
     close: <CloseIcon {...props} />,
     add: <AddIcon {...props} />,
+    filter: <FilterListOutlinedIcon {...props} />,
   };
 
   return iconMap[name] ?? null;

@@ -3,12 +3,14 @@ import TableCell from '@mui/material/TableCell';
 import Checkbox from '@mui/material/Checkbox';
 import TableBody from '@mui/material/TableBody';
 import type { HeadCell } from './table-header';
+import TableSkeleton from './table-skeleton';
 
 interface TableBodyProps<T> {
   visibleRows: T[];
   headCells: HeadCell<T>[];
   selected?: readonly (string | number)[];
   isCheckBox?: boolean;
+  loading: boolean;
   handleClick?: (event: React.MouseEvent<unknown>, id: string | number) => void;
 }
 
@@ -18,10 +20,20 @@ function TableBodyRow<T extends { [key: string]: unknown }>({
   selected = [],
   handleClick,
   isCheckBox = false,
+  loading = true,
 }: TableBodyProps<T>) {
   const getRowId = (row: T): string => {
     return row._id ? String(row._id) : String(row.id) || '';
   };
+  if (loading) {
+    return (
+      <TableSkeleton
+        rows={10}
+        columns={headCells.length}
+        isCheckBox={isCheckBox}
+      />
+    );
+  }
   return (
     <TableBody>
       {visibleRows.map((row, index) => {

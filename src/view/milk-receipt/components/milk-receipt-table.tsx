@@ -8,7 +8,6 @@ import TableBodyRow from '../../../components/ui/table/table-body-row';
 import CustomMenu from '../../../components/ui/menu';
 import { getMuiIcon } from '../../../utils/functions/mui-icon';
 import type { MilkReceiptRow } from '../../../types/response/milk-receipt';
-import { useMilkReceiptListQuery } from '../../../features/milk-receipt/milk-receipt-api';
 import { useMemo } from 'react';
 
 import dayjs from 'dayjs';
@@ -22,6 +21,7 @@ type TMilkReceiptRow = {
   amount: React.ReactNode;
   dateTime: React.ReactNode;
   createdBy: React.ReactNode;
+  createdAt: React.ReactNode;
   actions: React.ReactNode;
 };
 
@@ -34,6 +34,7 @@ function createData({
   amount,
   dateTime,
   createdId,
+  createdAt,
 }: MilkReceiptRow): TMilkReceiptRow {
   return {
     _id,
@@ -85,6 +86,14 @@ function createData({
         {dayjs(dateTime).format('DD-MM-YYYY') || '-'}
       </Typography>
     ),
+    createdAt: (
+      <Typography
+        variant='body2'
+        sx={{ color: 'text.secondary' }}
+      >
+        {dayjs(createdAt).format('DD-MM-YYYY') || '-'}
+      </Typography>
+    ),
     createdBy: (
       <Typography
         variant='body2'
@@ -111,28 +120,40 @@ const headCells: HeadCell<TMilkReceiptRow>[] = [
   { id: 'qty', label: 'Qty', align: 'center' },
   { id: 'rate', label: 'Rate', align: 'center' },
   { id: 'amount', label: 'Amount', align: 'center' },
-  { id: 'dateTime', label: 'Date', align: 'center' },
+  { id: 'dateTime', label: 'Receipt Date', align: 'center' },
+  { id: 'createdAt', label: 'Reg. date', align: 'left' },
   { id: 'createdBy', label: 'Added By', align: 'left' },
   { id: 'actions', label: 'Actions', align: 'center' },
 ];
 
-const MilkReceiptTable = () => {
-  const { data } = useMilkReceiptListQuery();
+interface IProps {
+  isLoading: boolean;
+  isFetching: boolean;
+  data: {
+    data: MilkReceiptRow[];
+  };
+}
+
+const MilkReceiptTable = (props: IProps) => {
+  const { isFetching, isLoading, data = { data: [] } } = props;
 
   const rows: TMilkReceiptRow[] = useMemo(() => {
     return data?.data.map((user) => createData(user)) || [];
-  }, [data]);
+  }, [data.data]);
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2, padding: '0px' }}>
-        <TableContainer>
+      <Paper sx={{ width: '100%', mb: 2, padding: '0px', overflow: 'hidden' }}>
+        <TableContainer sx={{ maxHeight: 440 }}>
           <Table
+            stickyHeader={true}
+            aria-label='sticky table'
             sx={{ minWidth: 750 }}
             aria-labelledby='tableTitle'
           >
             <TableHeader headCells={headCells} />
             <TableBodyRow
+              loading={isLoading || isFetching}
               visibleRows={rows}
               headCells={headCells}
             />
